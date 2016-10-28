@@ -7,6 +7,7 @@ Add New Product
 
 var inquirer = require('inquirer');
 var mysql = require('mysql');
+// NOTE TO SELF: add console.table for table output (https://www.npmjs.com/package/console.table)
 
  var connection = mysql.createConnection({
    host: "localhost",
