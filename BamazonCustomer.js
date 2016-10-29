@@ -1,5 +1,7 @@
+// include required node packages
 var mysql = require('mysql');
 var inquirer = require('inquirer');
+require('console.table');
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -8,15 +10,15 @@ var connection = mysql.createConnection({
     database: "Bamazon"
 })
 
+// console log the table using console.table
 function display() {
     connection.query('SELECT * FROM Products', function(err, res) {
-        for (var i = 0; i < res.length; i++) {
-            console.log(res[i].ItemID + " | " + res[i].ProductName + " | " + res[i].DepartmentName + " | " + res[i].Price + " | " + res[i].StockQuantity);
-        }
-        console.log("---------------------------------------------------");
+        console.log('\n');
+        console.table(res);
     });
 }
 
+// prompt for id and quantity, then process order
 function takeOrder() {
     var questions = [{
         type: 'input',
@@ -36,6 +38,7 @@ function takeOrder() {
     });
 }
 
+// check first to ensure there is sufficient stock for the order, then call placeOrder() to update the db
 function checkOrder(id, quantity) {
     connection.query('SELECT * FROM Products WHERE ItemID=' + id, function(err, res) {
         if (res[0].StockQuantity >= quantity) {
@@ -46,16 +49,16 @@ function checkOrder(id, quantity) {
     });
 }
 
+// update the db so the inventory remains accurate
 function placeOrder(id, quantity) {
     connection.query('SELECT * FROM Products WHERE ItemID=?', [id], function(err, res) {
-        connection.query('UPDATE Products SET StockQuantity=? WHERE ItemID=?', [res[0].StockQuantity - quantity, id], function(err, res) {});
+        connection.query('UPDATE Products SET StockQuantity=? WHERE ItemID=?', [res[0].StockQuantity - quantity, id], function(err, res) {
+            showTotalCost(id, quantity);
+        });
     });
-
-
-showTotalCost(id, quantity);
-
 }
 
+// compute and console log the total cost of an order
 function showTotalCost(id, quantity) {
     connection.query('SELECT * FROM Products WHERE ItemID=' + id, function(err, res) {
         console.log('total cost is $' + res[0].Price * quantity);
