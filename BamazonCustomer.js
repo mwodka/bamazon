@@ -40,11 +40,36 @@ function takeOrder() {
 
 // check first to ensure there is sufficient stock for the order, then call placeOrder() to update the db
 function checkOrder(id, quantity) {
-    connection.query('SELECT * FROM Products WHERE ItemID=' + id, function(err, res) {
-        if (res[0].StockQuantity >= quantity) {
-            placeOrder(id, quantity);
+    connection.query('SELECT * FROM Products JOIN Departments ON products.DepartmentName = Departments.DepartmentName', function(err, res) {
+        if (err) throw err;
+
+        if (res[id - 1].StockQuantity > quantity) {
+            var newQuantity = parseInt(res[id - 1].StockQuantity) - parseInt(quantity);
+            var total = parseFloat(quantity) * parseFloat(res[id - 1].Price);
+            total = total.toFixed(2);
+
+            var departmentTotal = parseFloat(total) + parseFloat(res[id - 1].TotalSales);
+            departmentTotal = departmentTotal.toFixed(2);
+
+            connection.query("UPDATE departments SET ? WHERE ?", [{
+                TotalSales: departmentTotal
+            }, {
+                DepartmentName: res[id - 1].DepartmentName
+            }], function(error, results) {});
+
+            connection.query("UPDATE products SET ? WHERE ?", [{
+                StockQuantity: newQuantity
+            }, {
+                itemID: id
+            }], function(error, results) {
+                if (error) throw error;
+
+                console.log("Your order for " + quantity + " " + res[id - 1].ProductName +
+                    "(s) has been placed.");
+                console.log("Your total is $" + total);
+            });
         } else {
-            console.log('insufficient stock');
+            console.log('\n insufficient stock');
         }
     });
 }
