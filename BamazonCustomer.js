@@ -43,9 +43,9 @@ function checkOrder(id, quantity) {
     connection.query('SELECT * FROM Products JOIN Departments ON products.DepartmentName = Departments.DepartmentName', function(err, res) {
         if (err) throw err;
 
-        if (res[id - 1].StockQuantity > quantity) {
-            var newQuantity = parseInt(res[id - 1].StockQuantity) - parseInt(quantity);
-            var total = parseFloat(quantity) * parseFloat(res[id - 1].Price);
+        if (res[id].StockQuantity > quantity) {
+            var newQuantity = parseInt(res[id].StockQuantity) - parseInt(quantity);
+            var total = parseFloat(quantity) * parseFloat(res[id].Price);
             total = total.toFixed(2);
 
             var departmentTotal = parseFloat(total) + parseFloat(res[id - 1].TotalSales);
@@ -54,7 +54,7 @@ function checkOrder(id, quantity) {
             connection.query("UPDATE departments SET ? WHERE ?", [{
                 TotalSales: departmentTotal
             }, {
-                DepartmentName: res[id - 1].DepartmentName
+                DepartmentName: res[id].DepartmentName
             }], function(error, results) {});
 
             connection.query("UPDATE products SET ? WHERE ?", [{
