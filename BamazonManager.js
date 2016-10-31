@@ -99,7 +99,6 @@ function addNewProduct() {
     }];
 
     inquirer.prompt(questions).then(function(answers) {
-        // NOTE TO SELF: change db to make primary id auto-increment, then update the following code
         connection.query('INSERT INTO Products SET ?', { ProductName: answers.name, DepartmentName: answers.deptname, Price: answers.price, StockQuantity: answers.quantity }, function(err, result) {
             if (err) throw err;
         });
