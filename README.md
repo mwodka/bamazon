@@ -6,6 +6,8 @@ npm install
 
 ### Usage
 
+```javascript
 node BamazonCustomer.js
 node BamazonManager.js
 node BamazonExecutive.js
+```
