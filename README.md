@@ -11,3 +11,5 @@ node BamazonCustomer.js
 node BamazonManager.js
 node BamazonExecutive.js
 ```
+### Screenshots
+
