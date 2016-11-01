@@ -1,4 +1,4 @@
-#Week of 12 HW: Node.js & MySQL
+#Week 12 - Bamazon
 
 ### Installation
 
